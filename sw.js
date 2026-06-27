@@ -1,4 +1,4 @@
-const CACHE_NAME = "camera-pwa-test-v3";
+const CACHE_NAME = "camera-pwa-test-v4";
 const ASSETS = [
   "./",
   "./index.html",
