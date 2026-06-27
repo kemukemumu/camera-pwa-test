@@ -81,7 +81,7 @@ video {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 16px max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  padding: 16px max(18px, env(safe-area-inset-right)) max(34px, calc(env(safe-area-inset-bottom) + 28px)) max(18px, env(safe-area-inset-left));
   background: rgba(247, 251, 251, 0.94);
   color: #101820;
   border-top: 1px solid rgba(16, 24, 32, 0.1);
@@ -109,7 +109,7 @@ h1 {
 
 button {
   min-width: 84px;
-  min-height: 44px;
+  min-height: 48px;
   padding: 0 16px;
   border: 0;
   border-radius: 8px;
