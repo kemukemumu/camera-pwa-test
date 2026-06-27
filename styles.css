@@ -37,7 +37,8 @@ button {
 }
 
 video,
-.empty-state {
+.empty-state,
+.photo-preview {
   grid-area: 1 / 1;
 }
 
@@ -66,6 +67,25 @@ video {
   max-width: 320px;
   margin: 0;
   line-height: 1.65;
+}
+
+.photo-preview {
+  align-self: start;
+  justify-self: end;
+  width: min(38vw, 180px);
+  margin: 14px;
+  overflow: hidden;
+  border: 2px solid rgba(247, 251, 251, 0.88);
+  border-radius: 8px;
+  background: #f7fbfb;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+}
+
+.photo-preview img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
 }
 
 .lens-mark {
@@ -103,6 +123,8 @@ h1 {
 
 .button-row {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
   flex-shrink: 0;
 }
