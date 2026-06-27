@@ -13,20 +13,26 @@
     <main class="app-shell">
       <section class="camera-panel" aria-label="Camera preview">
         <video id="cameraPreview" autoplay playsinline muted></video>
+        <canvas id="captureCanvas" hidden></canvas>
         <div id="emptyState" class="empty-state">
           <div class="lens-mark" aria-hidden="true"></div>
-          <p>カメラを開始すると、ここに映像が表示されます。</p>
+          <p>繧ｫ繝｡繝ｩ繧帝幕蟋九☆繧九→縲√％縺薙↓譏蜒上′陦ｨ遉ｺ縺輔ｌ縺ｾ縺吶・/p>
         </div>
+        <figure id="photoPreview" class="photo-preview" hidden>
+          <img id="capturedImage" alt="謦ｮ蠖ｱ縺励◆蜀咏悄">
+        </figure>
       </section>
 
       <section class="controls" aria-label="Camera controls">
         <div>
           <h1>Camera PWA Test</h1>
-          <p id="statusText">待機中</p>
+          <p id="statusText">蠕・ｩ滉ｸｭ</p>
         </div>
         <div class="button-row">
-          <button id="startButton" type="button">カメラ開始</button>
-          <button id="stopButton" type="button" disabled>停止</button>
+          <button id="startButton" type="button">繧ｫ繝｡繝ｩ髢句ｧ・/button>
+          <button id="captureButton" type="button" disabled>謦ｮ蠖ｱ</button>
+          <button id="saveButton" type="button" disabled>繧ｹ繝槭・縺ｫ菫晏ｭ・/button>
+          <button id="stopButton" type="button" disabled>蛛懈ｭ｢</button>
         </div>
       </section>
     </main>
