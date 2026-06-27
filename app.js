@@ -13,6 +13,24 @@ let stream = null;
 let capturedBlob = null;
 let capturedObjectUrl = null;
 
+const messages = {
+  idle: "\u5f85\u6a5f\u4e2d",
+  stopped: "\u505c\u6b62\u4e2d",
+  captured: "\u64ae\u5f71\u6e08\u307f",
+  unsupported: "\u3053\u306e\u30d6\u30e9\u30a6\u30b6\u306f\u30ab\u30e1\u30e9\u8868\u793a\u306b\u5bfe\u5fdc\u3057\u3066\u3044\u307e\u305b\u3093\u3002",
+  waiting: "\u30ab\u30e1\u30e9\u306e\u8a31\u53ef\u3092\u5f85\u3063\u3066\u3044\u307e\u3059...",
+  running: "\u30ab\u30e1\u30e9\u8868\u793a\u4e2d",
+  denied: "\u30ab\u30e1\u30e9\u5229\u7528\u304c\u8a31\u53ef\u3055\u308c\u307e\u305b\u3093\u3067\u3057\u305f\u3002\u30d6\u30e9\u30a6\u30b6\u306e\u6a29\u9650\u8a2d\u5b9a\u3092\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
+  notFound: "\u5229\u7528\u3067\u304d\u308b\u30ab\u30e1\u30e9\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f\u3002",
+  startFailed: "\u30ab\u30e1\u30e9\u3092\u958b\u59cb\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002HTTPS\u306eURL\u3067\u958b\u3044\u3066\u3044\u308b\u304b\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
+  notReady: "\u307e\u3060\u64ae\u5f71\u3067\u304d\u307e\u305b\u3093\u3002\u30ab\u30e1\u30e9\u6620\u50cf\u304c\u8868\u793a\u3055\u308c\u3066\u304b\u3089\u8a66\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
+  blobFailed: "\u64ae\u5f71\u753b\u50cf\u3092\u4f5c\u6210\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002",
+  captureDone: "\u64ae\u5f71\u3057\u307e\u3057\u305f\u3002\u30b9\u30de\u30db\u306b\u4fdd\u5b58\u3067\u304d\u307e\u3059\u3002",
+  shareStarted: "\u4fdd\u5b58/\u5171\u6709\u3092\u958b\u59cb\u3057\u307e\u3057\u305f\u3002",
+  shareCanceled: "\u4fdd\u5b58/\u5171\u6709\u3092\u30ad\u30e3\u30f3\u30bb\u30eb\u3057\u307e\u3057\u305f\u3002",
+  downloaded: "\u753b\u50cf\u3092\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f\u3002",
+};
+
 const setStatus = (message) => {
   statusText.textContent = message;
 };
@@ -27,17 +45,17 @@ const stopCamera = () => {
   startButton.disabled = false;
   captureButton.disabled = true;
   stopButton.disabled = true;
-  setStatus(capturedBlob ? "謦ｮ蠖ｱ貂医∩" : "蛛懈ｭ｢荳ｭ");
+  setStatus(capturedBlob ? messages.captured : messages.stopped);
 };
 
 const startCamera = async () => {
   if (!navigator.mediaDevices?.getUserMedia) {
-    setStatus("縺薙・繝悶Λ繧ｦ繧ｶ縺ｯ繧ｫ繝｡繝ｩ陦ｨ遉ｺ縺ｫ蟇ｾ蠢懊＠縺ｦ縺・∪縺帙ｓ縲・);
+    setStatus(messages.unsupported);
     return;
   }
 
   try {
-    setStatus("繧ｫ繝｡繝ｩ縺ｮ險ｱ蜿ｯ繧貞ｾ・▲縺ｦ縺・∪縺・..");
+    setStatus(messages.waiting);
     startButton.disabled = true;
 
     stream = await navigator.mediaDevices.getUserMedia({
@@ -53,30 +71,30 @@ const startCamera = async () => {
     emptyState.classList.add("hidden");
     captureButton.disabled = false;
     stopButton.disabled = false;
-    setStatus("繧ｫ繝｡繝ｩ陦ｨ遉ｺ荳ｭ");
+    setStatus(messages.running);
   } catch (error) {
     startButton.disabled = false;
     captureButton.disabled = true;
     stopButton.disabled = true;
 
     if (error.name === "NotAllowedError") {
-      setStatus("繧ｫ繝｡繝ｩ蛻ｩ逕ｨ縺瑚ｨｱ蜿ｯ縺輔ｌ縺ｾ縺帙ｓ縺ｧ縺励◆縲ゅヶ繝ｩ繧ｦ繧ｶ縺ｮ讓ｩ髯占ｨｭ螳壹ｒ遒ｺ隱阪＠縺ｦ縺上□縺輔＞縲・);
+      setStatus(messages.denied);
       return;
     }
 
     if (error.name === "NotFoundError") {
-      setStatus("蛻ｩ逕ｨ縺ｧ縺阪ｋ繧ｫ繝｡繝ｩ縺瑚ｦ九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆縲・);
+      setStatus(messages.notFound);
       return;
     }
 
-    setStatus("繧ｫ繝｡繝ｩ繧帝幕蟋九〒縺阪∪縺帙ｓ縺ｧ縺励◆縲・TTPS縺ｮURL縺ｧ髢九＞縺ｦ縺・ｋ縺狗｢ｺ隱阪＠縺ｦ縺上□縺輔＞縲・);
+    setStatus(messages.startFailed);
     console.error(error);
   }
 };
 
 const capturePhoto = () => {
   if (!stream || !preview.videoWidth || !preview.videoHeight) {
-    setStatus("縺ｾ縺謦ｮ蠖ｱ縺ｧ縺阪∪縺帙ｓ縲ゅき繝｡繝ｩ譏蜒上′陦ｨ遉ｺ縺輔ｌ縺ｦ縺九ｉ隧ｦ縺励※縺上□縺輔＞縲・);
+    setStatus(messages.notReady);
     return;
   }
 
@@ -86,7 +104,7 @@ const capturePhoto = () => {
 
   captureCanvas.toBlob((blob) => {
     if (!blob) {
-      setStatus("謦ｮ蠖ｱ逕ｻ蜒上ｒ菴懈・縺ｧ縺阪∪縺帙ｓ縺ｧ縺励◆縲・);
+      setStatus(messages.blobFailed);
       return;
     }
 
@@ -97,7 +115,7 @@ const capturePhoto = () => {
     capturedImage.src = capturedObjectUrl;
     photoPreview.hidden = false;
     saveButton.disabled = false;
-    setStatus("謦ｮ蠖ｱ縺励∪縺励◆縲ゅせ繝槭・縺ｫ菫晏ｭ倥〒縺阪∪縺吶・);
+    setStatus(messages.captureDone);
   }, "image/jpeg", 0.92);
 };
 
@@ -111,14 +129,14 @@ const savePhoto = async () => {
     try {
       await navigator.share({
         files: [file],
-        title: "謦ｮ蠖ｱ縺励◆蜀咏悄",
-        text: "Camera PWA Test縺ｧ謦ｮ蠖ｱ縺励◆蜀咏悄縺ｧ縺吶・,
+        title: "\u64ae\u5f71\u3057\u305f\u5199\u771f",
+        text: "Camera PWA Test",
       });
-      setStatus("菫晏ｭ・蜈ｱ譛峨ｒ髢句ｧ九＠縺ｾ縺励◆縲・);
+      setStatus(messages.shareStarted);
       return;
     } catch (error) {
       if (error.name === "AbortError") {
-        setStatus("菫晏ｭ・蜈ｱ譛峨ｒ繧ｭ繝｣繝ｳ繧ｻ繝ｫ縺励∪縺励◆縲・);
+        setStatus(messages.shareCanceled);
         return;
       }
       console.warn("Share failed, falling back to download:", error);
@@ -131,7 +149,7 @@ const savePhoto = async () => {
   document.body.appendChild(link);
   link.click();
   link.remove();
-  setStatus("逕ｻ蜒上ｒ繝繧ｦ繝ｳ繝ｭ繝ｼ繝峨＠縺ｾ縺励◆縲・);
+  setStatus(messages.downloaded);
 };
 
 startButton.addEventListener("click", startCamera);
