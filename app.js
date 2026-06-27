@@ -14,7 +14,7 @@ let capturedBlob = null;
 let capturedObjectUrl = null;
 
 const messages = {
-  idle: "\u5f85\u6a5f\u4e2d",
+  ready: "\u6e96\u5099\u5b8c\u4e86",
   stopped: "\u505c\u6b62\u4e2d",
   captured: "\u64ae\u5f71\u6e08\u307f",
   unsupported: "\u3053\u306e\u30d6\u30e9\u30a6\u30b6\u306f\u30ab\u30e1\u30e9\u8868\u793a\u306b\u5bfe\u5fdc\u3057\u3066\u3044\u307e\u305b\u3093\u3002",
@@ -35,6 +35,20 @@ const setStatus = (message) => {
   statusText.textContent = message;
 };
 
+const clearOldOfflineCache = () => {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then((registrations) => registrations.forEach((registration) => registration.unregister()))
+      .catch((error) => console.warn("Service worker cleanup failed:", error));
+  }
+
+  if ("caches" in window) {
+    caches.keys()
+      .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+      .catch((error) => console.warn("Cache cleanup failed:", error));
+  }
+};
+
 const stopCamera = () => {
   if (!stream) return;
 
@@ -49,13 +63,14 @@ const stopCamera = () => {
 };
 
 const startCamera = async () => {
+  setStatus(messages.waiting);
+
   if (!navigator.mediaDevices?.getUserMedia) {
     setStatus(messages.unsupported);
     return;
   }
 
   try {
-    setStatus(messages.waiting);
     startButton.disabled = true;
 
     stream = await navigator.mediaDevices.getUserMedia({
@@ -158,10 +173,5 @@ saveButton.addEventListener("click", savePhoto);
 stopButton.addEventListener("click", stopCamera);
 window.addEventListener("pagehide", stopCamera);
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js").catch((error) => {
-      console.warn("Service worker registration failed:", error);
-    });
-  });
-}
+clearOldOfflineCache();
+setStatus(messages.ready);
